@@ -71,7 +71,7 @@ If *New Song* is **inserted** with *play_order* set to 1, the table will now loo
 | 3      | Popular Song      |    3 |
 | 4      | New Song      |    1 |
 
-Lasty, if the *Popular Song* is not so popular anymore and is **deleted** from the list, the table will end up like this:
+Lastly, if the *Popular Song* is not so popular anymore and is **deleted** from the list, the table will end up like this:
 
 | id        | title           | play_order  |
 | --- |:-------------:| :---:|
