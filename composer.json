@@ -1,0 +1,39 @@
+{
+    "name": "gintonicweb/reorder",
+    "description": "Reorder behavior plugin for CakePHP",
+    "type": "cakephp-plugin",
+    "homepage": "http://gintoniccms.com",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Yannick Cadoret",
+            "homepage": "http://gintonicweb.com",
+            "role": "Author"
+        },
+        {
+            "name": "Contributors",
+            "homepage": "http://github.com/gintonicweb/reorder/graphs/contributors"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/gintonicweb/reorder/issues",
+        "source": "https://github.com/gintonicweb/reorder"
+    },
+    "require": {
+        "php": ">=5.4.16",
+        "cakephp/cakephp": "~3.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Reorder\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Reorder\\Test\\": "tests"
+        }
+    }
+}
