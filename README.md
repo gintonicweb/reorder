@@ -1,7 +1,6 @@
 # Reorder plugin for CakePHP
 
-Reorder all the values of a database field from the attached table when a change occures on that field in any rows of the table.
-Reorder a database field according to changes occuring on that field.
+Reorder a database field according to changes occuring on that field. A change can happen from a deleted or inserted row. It can also come from the modification of the chosen field of any existing row.
 
 ## Installation
 
@@ -19,6 +18,16 @@ Plugin::load('Reorder');
 
 ## Usage
 
+### Config options
+
+
+```
+$this->addBehavior('Reorder.Reorder', [
+    // The field that is used as to keep the order, must be an integer
+    'field' => 'play_order',
+]);
+```
+
 ### Example 1
 
 In a playlist, the songs are listed in a specific order. If a song is deleted, inserted or modified, the play order of all other songs should be ajusted accordingly.
@@ -31,21 +40,42 @@ CREATE table songs(
 );
 ```
 
-Load the behavior in your model ```SongsTable.php```:
+Load the behavior in your model ```SongsTable.php``` (the field must be an integer):
 
 ```
 $this->addBehavior('Reorder.Reorder', ['field' => 'play_order']);
 ```
 
-The field must be an integer.
+Suppose we have the table filled like this:
 
+| id        | title           | play_order  |
+| --- |:-------------:| :---:|
+| 1      | Best Song | 1 |
+| 2      | Sad Song      |   2 |
+| 3      | Popular Song      |    3 |
 
-### Config options
+and that the *play_order* of the *Best Song* is **modified** from 1 to 3, the table will be re-ordered as follow:
 
+| id        | title           | play_order  |
+| --- |:-------------:| :---:|
+| 1      | Best Song | 3 |
+| 2      | Sad Song      |   1 |
+| 3      | Popular Song      |    2 |
 
-```
-$this->addBehavior('Reorder.Reorder', [
-    // The field that is used as to keep the order, must be an integer
-    'field' => 'play_order',
-]);
-```
+If *New Song* is **inserted** with *play_order* set to 1, the table will now look like this:
+
+| id        | title           | play_order  |
+| --- |:-------------:| :---:|
+| 1      | Best Song | 4 |
+| 2      | Sad Song      |   2 |
+| 3      | Popular Song      |    3 |
+| 4      | New Song      |    1 |
+
+Lasty, if the *Popular Song* is not so popular anymore and is **deleted** from the list, the table will end up like this:
+
+| id        | title           | play_order  |
+| --- |:-------------:| :---:|
+| 1      | Best Song | 3 |
+| 2      | Sad Song      |   2 |
+| 4      | New Song      |    1 |
+
