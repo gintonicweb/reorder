@@ -24,6 +24,13 @@ class ReorderBehavior extends Behavior
         'field' => null
     ];
 
+    /**
+     * This event is fired before each entity is saved
+     *
+     * @param \Cake\Event\Event $event The event data
+     * @param \Cake\Datasource\EntityInterface $entity The entity being saved
+     * @return void
+     */
     public function beforeSave(Event $event, Entity $entity)
     {
         $config = $this->config();
@@ -42,10 +49,16 @@ class ReorderBehavior extends Behavior
         }
         
         list($conditions, $expression) = $this->getQueryData($oldPos, $newPos);
-
         $this->reorder($conditions, $expression);
     }
     
+    /**
+     * This event is fired before an entity is deleted.
+     *
+     * @param \Cake\Event\Event $event The event data
+     * @param \Cake\Datasource\EntityInterface $entity The entity being saved
+     * @return void
+     */
     public function beforeDelete(Event $event, Entity $entity)
     {
         $config = $this->config();
@@ -54,11 +67,16 @@ class ReorderBehavior extends Behavior
         $oldPos = $entity->$config['field'];
         
         list($conditions, $expression) = $this->getQueryData($oldPos, $newPos);
-        
         $this->reorder($conditions, $expression);
     }
 
 
+    /**
+     * Query the database to obtain the data of an previously existing entity. 
+     *
+     * @param \Cake\Datasource\EntityInterface $entity The modified entity.
+     * @return \Cake\Datasource\EntityInterface
+     */
     public function getOldEntity(Entity $entity)
     {
         $config = $this->config();
@@ -71,6 +89,14 @@ class ReorderBehavior extends Behavior
             ->first();
     }
     
+    /**
+     * Obtain the query conditions and expression for the reorder based on
+     *  the old and new positions. 
+     *
+     * @param int $oldPos The old position.
+     * @param int $newPos The new position.
+     * @return array
+     */
     public function getQueryData($oldPos, $newPos)
     {
         $field = $this->config()['field'];
@@ -101,7 +127,15 @@ class ReorderBehavior extends Behavior
         return [$conditions, $expression];
     }
 
-    public function reorder($conditions, $expression)
+    /**
+     * Process to the reorder of the selected field. The entity matching the conditions
+     *  will be either incremented on decremented based on the given expression.
+     *
+     * @param array $conditions The query conditions.
+     * @param Cake\Database\ExpressionInterface $expression The query expression.
+     * @return array
+     */
+    public function reorder(array $conditions, $expression)
     {
         $this->_table->query()
             ->update()
