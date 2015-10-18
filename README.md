@@ -1,3 +1,8 @@
+[![Build Status](https://travis-ci.org/gintonicweb/reorder.svg)](https://travis-ci.org/gintonicweb/reorder)
+[![Coverage Status](https://coveralls.io/repos/gintonicweb/reorder/badge.svg?branch=master&service=github)](https://coveralls.io/github/gintonicweb/reorder?branch=master)
+[![Packagist](https://img.shields.io/packagist/dt/gintonicweb/reorder.svg)]()
+[![Software License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
 # Reorder plugin for CakePHP
 
 Reorder a database field according to changes occuring on that field. A change can happen from a deleted or inserted row. It can also come from the modification of the chosen field of any existing row.

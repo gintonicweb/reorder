@@ -6,7 +6,7 @@
     bootstrap="./tests/bootstrap.php">
 
     <testsuites>
-        <testsuite name="GintonicCMS">
+        <testsuite name="Reorder">
             <directory>./tests</directory>
         </testsuite>
     </testsuites>
