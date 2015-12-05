@@ -50,7 +50,7 @@ class ReorderBehaviorTest extends TestCase
     }
 
     /**
-     * Test initial setup
+     * Test the update of an existing item
      *
      * @return void
      */
@@ -70,12 +70,43 @@ class ReorderBehaviorTest extends TestCase
     }
 
     /**
-     * Test initial setup
+     * Test the insertion of a new item
      *
      * @return void
      */
     public function testBeforeSaveOnInsert()
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        $song = $this->Songs->newEntity([
+            'title' => 'New Song',
+            'play_order' => 2,
+        ]);
+        $this->Songs->save($song);
+        
+        $result = $this->Songs->find('list', ['valueField' => 'play_order'])->toArray();
+        $expected = [
+            1 => 1,
+            2 => 3,
+            3 => 4,
+            4 => 2,
+        ];
+        $this->assertEquals($expected, $result);
+    }
+    
+    /**
+     * Test the removal of an existing item
+     *
+     * @return void
+     */
+    public function testBeforeDelete()
+    {
+        $song = $this->Songs->get(1);
+        $this->Songs->delete($song);
+        
+        $result = $this->Songs->find('list', ['valueField' => 'play_order'])->toArray();
+        $expected = [
+            2 => 1,
+            3 => 2,
+        ];
+        $this->assertEquals($expected, $result);
     }
 }
