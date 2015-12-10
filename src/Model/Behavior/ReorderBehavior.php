@@ -109,8 +109,6 @@ class ReorderBehavior extends Behavior
      */
     public function getQueryData($oldPos, $newPos, $field)
     {
-        $config = $this->config();
-        
         if (is_null($newPos)) {
             // Deleting
             $conditions = [$field . ' >' => $oldPos];

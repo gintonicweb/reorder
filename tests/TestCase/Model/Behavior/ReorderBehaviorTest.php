@@ -70,6 +70,16 @@ class ReorderBehaviorTest extends TestCase
     }
 
     /**
+     * Test the update of an existing item with multiple reorder fields
+     *
+     * @return void
+     */
+    public function testBeforeSaveOnReorderMulti()
+    {
+        $this->markTestIncomplete('Not implemented yet.');
+    }
+    
+    /**
      * Test the insertion of a new item
      *
      * @return void
@@ -93,6 +103,16 @@ class ReorderBehaviorTest extends TestCase
     }
     
     /**
+     * Test the insertion of a new item with multiple reorder fields
+     *
+     * @return void
+     */
+    public function testBeforeSaveOnInsertMulti()
+    {
+        $this->markTestIncomplete('Not implemented yet.');
+    }
+    
+    /**
      * Test the removal of an existing item
      *
      * @return void
@@ -108,5 +128,15 @@ class ReorderBehaviorTest extends TestCase
             3 => 2,
         ];
         $this->assertEquals($expected, $result);
+    }
+    
+    /**
+     * Test the removal of an existing item multiple reorder fields
+     *
+     * @return void
+     */    
+    public function testBeforeDeleteMulti()
+    {
+        $this->markTestIncomplete('Not implemented yet.');
     }
 }
