@@ -15,14 +15,18 @@ class ReorderBehavior extends Behavior
 {
 
     /**
-     * Default configuration.
+     * Default configuration exemple.
      *
      * @var array
      */
-    protected $_defaultConfig = [
-        'allowGap' => true, // todo: always allow gap for now
-        'field' => null
-    ];
+    
+    /*protected $_defaultConfig = [
+        'order_field' => [
+            'allowGap' => true, // todo: always allow gap for now
+        ],
+     ];*/
+     
+     protected $_defaultConfig = [];
 
     /**
      * This event is fired before each entity is saved
@@ -34,22 +38,26 @@ class ReorderBehavior extends Behavior
     public function beforeSave(Event $event, Entity $entity)
     {
         $config = $this->config();
-        if (!$entity->dirty($config['field'])) {
-            return;
+        
+        foreach(array_keys($config) as $field) {
+            if (!$entity->dirty($field)) {
+                continue;
+            }
+            
+            $newPos = $entity->$field;
+            
+            $oldEntity = $this->getOldEntity($entity, $field);
+            if (is_null($oldEntity)) {
+                // Adding new entity
+                $oldPos = null;
+            } else {
+                $oldPos = $oldEntity->$field;
+            }
+            
+            list($conditions, $expression) = $this->getQueryData($oldPos, $newPos, $field);
+
+            $this->reorder($conditions, $expression);
         }
-        
-        $newPos = $entity->$config['field'];
-        
-        $oldEntity = $this->getOldEntity($entity);
-        if (is_null($oldEntity)) {
-            // Adding new entity
-            $oldPos = null;
-        } else {
-            $oldPos = $oldEntity->$config['field'];
-        }
-        
-        list($conditions, $expression) = $this->getQueryData($oldPos, $newPos);
-        $this->reorder($conditions, $expression);
     }
     
     /**
@@ -63,28 +71,29 @@ class ReorderBehavior extends Behavior
     {
         $config = $this->config();
         
-        $newPos = null;
-        $oldPos = $entity->$config['field'];
-        
-        list($conditions, $expression) = $this->getQueryData($oldPos, $newPos);
-        $this->reorder($conditions, $expression);
+        foreach(array_keys($config) as $field) {
+            $newPos = null;
+            $oldPos = $entity->$field;
+            
+            list($conditions, $expression) = $this->getQueryData($oldPos, $newPos, $field);
+            $this->reorder($conditions, $expression);
+        }
     }
-
 
     /**
      * Query the database to obtain the data of an previously existing entity. 
      *
      * @param \Cake\Datasource\EntityInterface $entity The modified entity.
+     * @param string $field The field name to re-order.
      * @return \Cake\Datasource\EntityInterface
      */
-    public function getOldEntity(Entity $entity)
+    public function getOldEntity(Entity $entity, $field)
     {
-        $config = $this->config();
         $primaryKey = $this->_table->primaryKey();
         $conditions = [$primaryKey => $entity->$primaryKey];
         
         return $this->_table->find()
-            ->select([$config['field']])
+            ->select([$field])
             ->where($conditions)
             ->first();
     }
@@ -95,11 +104,13 @@ class ReorderBehavior extends Behavior
      *
      * @param int $oldPos The old position.
      * @param int $newPos The new position.
+     * @param string $field The field name to re-order.
      * @return array
      */
-    public function getQueryData($oldPos, $newPos)
+    public function getQueryData($oldPos, $newPos, $field)
     {
-        $field = $this->config()['field'];
+        $config = $this->config();
+        
         if (is_null($newPos)) {
             // Deleting
             $conditions = [$field . ' >' => $oldPos];

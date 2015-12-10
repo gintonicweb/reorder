@@ -23,7 +23,7 @@ class ReorderBehaviorTest extends TestCase
     {
         parent::setUp();
         $this->Songs = TableRegistry::get('Reorder.Songs');
-        $this->Songs->addBehavior('Reorder.Reorder', ['field' => 'play_order']);
+        $this->Songs->addBehavior('Reorder.Reorder', ['play_order' => null]);
         $this->Behavior = $this->Songs->behaviors()->Reorder;
     }
 
