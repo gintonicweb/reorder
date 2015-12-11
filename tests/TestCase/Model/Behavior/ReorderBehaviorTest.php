@@ -102,6 +102,35 @@ class ReorderBehaviorTest extends TestCase
     }
     
     /**
+     * Test the update of an existing item where the first reorder field is 
+     *  untouched but not the second one.
+     *
+     * @return void
+     */
+    public function testBeforeSaveNoChange()
+    {
+        $song = $this->Songs->get(1);
+        $song->play_order_all = 2;
+        $this->Songs->save($song);
+
+        $result = $this->Songs->find('list', ['valueField' => 'play_order'])->toArray();
+        $expected = [
+            1 => 1,
+            2 => 2,
+            3 => 3,
+        ];
+        $this->assertEquals($expected, $result);
+        
+        $result = $this->Songs->find('list', ['valueField' => 'play_order_all'])->toArray();
+        $expected = [
+            1 => 2,
+            2 => 3,
+            3 => 1,
+        ];
+        $this->assertEquals($expected, $result);
+    }
+    
+    /**
      * Test the insertion of a new item
      *
      * @return void
