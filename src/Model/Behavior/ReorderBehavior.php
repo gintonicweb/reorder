@@ -139,9 +139,9 @@ class ReorderBehavior extends Behavior
     public function reorder(array $conditions, $expression)
     {
         return $this->_table->query()
-                ->update()
-                ->set($expression)
-                ->where($conditions)
-                ->execute();
+            ->update()
+            ->set($expression)
+            ->where($conditions)
+            ->execute();
     }
 }
