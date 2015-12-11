@@ -28,10 +28,12 @@ Plugin::load('Reorder');
 
 ```
 $this->addBehavior('Reorder.Reorder', [
-    // The field that is used as to keep the order, must be an integer
-    'field' => 'play_order',
+    // The fields that are used to keep the order, must be an integer fields
+    'field1' => [ 'param' => null ],
+    'field2' => [ 'param' => null ],
 ]);
 ```
+Currently no more options are supported, additional parameters can be left empty.
 
 ### Example 1
 
@@ -42,45 +44,49 @@ CREATE table songs(
     id int(10) unsigned NOT NULL auto_increment,
     title varchar(255) NOT NULL,
     play_order int(10) unsigned NOT NULL,
+    play_order_artist int(10) unsigned NOT NULL,
 );
 ```
 
 Load the behavior in your model ```SongsTable.php``` (the field must be an integer):
 
 ```
-$this->addBehavior('Reorder.Reorder', ['field' => 'play_order']);
+$this->addBehavior('Reorder.Reorder', [
+    'play_order' => [],
+    'play_order_artist' => [],
+]);
 ```
 
 Suppose we have the table filled like this:
 
-| id        | title           | play_order  |
-| --- |:-------------:| :---:|
-| 1      | Best Song | 1 |
-| 2      | Sad Song      |   2 |
-| 3      | Popular Song      |    3 |
+| id        | title           | play_order  | play_order_artist  |
+| --- |:-------------:| :---:| :---:|
+| 1      | Best Song | 1 | 3 |
+| 2      | Sad Song      |   2 | 2 |
+| 3      | Popular Song      |    3 | 1 |
 
 and that the *play_order* of the *Best Song* is **modified** from 1 to 3, the table will be re-ordered as follow:
 
-| id        | title           | play_order  |
-| --- |:-------------:| :---:|
-| 1      | Best Song | 3 |
-| 2      | Sad Song      |   1 |
-| 3      | Popular Song      |    2 |
+| id        | title           | play_order  | play_order_artist  |
+| --- |:-------------:| :---:| :---:|
+| 1      | Best Song | 3 | 3 |
+| 2      | Sad Song      |   1 | 2 |
+| 3      | Popular Song      |    2 | 1 |
 
-If *New Song* is **inserted** with *play_order* set to 1, the table will now look like this:
+If *New Song* is **inserted** with *play_order* set to 1 and *play_order_artist* set to 1, the table will now look like this:
 
-| id        | title           | play_order  |
-| --- |:-------------:| :---:|
-| 1      | Best Song | 4 |
-| 2      | Sad Song      |   2 |
-| 3      | Popular Song      |    3 |
-| 4      | New Song      |    1 |
+| id        | title           | play_order  | play_order_artist  |
+| --- |:-------------:| :---:| :---:|
+| 1      | Best Song | 4 | 4 |
+| 2      | Sad Song      |   2 | 3 |
+| 3      | Popular Song      |    3 | 2 |
+| 4      | New Song      |    1 | 1 |
 
 Lastly, if the *Popular Song* is not so popular anymore and is **deleted** from the list, the table will end up like this:
 
-| id        | title           | play_order  |
-| --- |:-------------:| :---:|
-| 1      | Best Song | 3 |
-| 2      | Sad Song      |   2 |
-| 4      | New Song      |    1 |
+| id        | title           | play_order  | play_order_artist  |
+| --- |:-------------:| :---:| :---:|
+| 1      | Best Song | 3 | 3 |
+| 2      | Sad Song      |   2 | 2 |
+| 4      | New Song      |    1 | 1 |
 
