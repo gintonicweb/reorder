@@ -1,32 +1,24 @@
 <?php
 namespace Reorder\Model\Behavior;
 
+use Cake\Database\Expression\QueryExpression;
 use Cake\Event\Event;
 use Cake\ORM\Behavior;
 use Cake\ORM\Entity;
-use Cake\ORM\Table;
 use Cake\ORM\Query;
-use Cake\Database\Expression\QueryExpression;
+use Cake\ORM\Table;
 
 /**
  * Reordering behavior
  */
 class ReorderBehavior extends Behavior
 {
-
     /**
-     * Default configuration exemple.
+     * Default configuration.
      *
      * @var array
      */
-    
-    /*protected $_defaultConfig = [
-        'order_field' => [
-            'allowGap' => true, // todo: always allow gap for now
-        ],
-     ];*/
-     
-     protected $_defaultConfig = [];
+    protected $_defaultConfig = [];
 
     /**
      * This event is fired before each entity is saved
@@ -39,7 +31,7 @@ class ReorderBehavior extends Behavior
     {
         $config = $this->config();
         
-        foreach(array_keys($config) as $field) {
+        foreach (array_keys($config) as $field) {
             if (!$entity->dirty($field)) {
                 continue;
             }
@@ -71,7 +63,7 @@ class ReorderBehavior extends Behavior
     {
         $config = $this->config();
         
-        foreach(array_keys($config) as $field) {
+        foreach (array_keys($config) as $field) {
             $newPos = null;
             $oldPos = $entity->$field;
             
@@ -81,7 +73,7 @@ class ReorderBehavior extends Behavior
     }
 
     /**
-     * Query the database to obtain the data of an previously existing entity. 
+     * Query the database to obtain the data of an previously existing entity.
      *
      * @param \Cake\Datasource\EntityInterface $entity The modified entity.
      * @param string $field The field name to re-order.
@@ -100,7 +92,7 @@ class ReorderBehavior extends Behavior
     
     /**
      * Obtain the query conditions and expression for the reorder based on
-     *  the old and new positions. 
+     *  the old and new positions.
      *
      * @param int $oldPos The old position.
      * @param int $newPos The new position.
@@ -113,21 +105,21 @@ class ReorderBehavior extends Behavior
             // Deleting
             $conditions = [$field . ' >' => $oldPos];
             $expression = new QueryExpression($field . ' = ' . $field . ' - 1');
-        } else if (is_null($oldPos)) { 
+        } elseif (is_null($oldPos)) {
             // Adding
             $conditions = [$field . ' >=' => $newPos];
             $expression = new QueryExpression($field . ' = ' . $field . ' + 1');
-        } else if ($newPos > $oldPos) {
+        } elseif ($newPos > $oldPos) {
             // Updating range
             $conditions = [
-                $field . ' >' => $oldPos, 
+                $field . ' >' => $oldPos,
                 $field . ' <=' => $newPos
             ];
             $expression = new QueryExpression($field . ' = ' . $field . ' - 1');
         } else {
             // Updating range
             $conditions = [
-                $field . ' <' => $oldPos, 
+                $field . ' <' => $oldPos,
                 $field . ' >=' => $newPos
             ];
             $expression = new QueryExpression($field . ' = ' . $field . ' + 1');
@@ -146,10 +138,10 @@ class ReorderBehavior extends Behavior
      */
     public function reorder(array $conditions, $expression)
     {
-        $this->_table->query()
-            ->update()
-            ->set($expression)
-            ->where($conditions)
-            ->execute();
+        return $this->_table->query()
+                ->update()
+                ->set($expression)
+                ->where($conditions)
+                ->execute();
     }
 }

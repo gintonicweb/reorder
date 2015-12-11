@@ -9,7 +9,6 @@ use Cake\TestSuite\Fixture\TestFixture;
  */
 class SongsFixture extends TestFixture
 {
-
     /**
      * Fields
      *
@@ -20,6 +19,7 @@ class SongsFixture extends TestFixture
         'id' => ['type' => 'integer', 'length' => 11, 'unsigned' => false, 'null' => false, 'default' => null, 'comment' => '', 'autoIncrement' => true, 'precision' => null],
         'title' => ['type' => 'string', 'length' => 255, 'null' => false, 'default' => null, 'comment' => '', 'precision' => null, 'fixed' => null],
         'play_order' => ['type' => 'integer', 'length' => 11, 'unsigned' => false, 'null' => false, 'default' => '0', 'comment' => '', 'precision' => null],
+        'play_order_all' => ['type' => 'integer', 'length' => 11, 'unsigned' => false, 'null' => false, 'default' => '0', 'comment' => '', 'precision' => null],
         '_constraints' => [
             'primary' => ['type' => 'primary', 'columns' => ['id'], 'length' => []],
         ],
@@ -39,14 +39,17 @@ class SongsFixture extends TestFixture
         [
             'title' => 'Best Song',
             'play_order' => '1',
+            'play_order_all' => '3',
         ],
         [
             'title' => 'Sad Song',
             'play_order' => '2',
+            'play_order_all' => '2',
         ],
         [
             'title' => 'Popular Song',
             'play_order' => '3',
+            'play_order_all' => '1',
         ],
     ];
 }

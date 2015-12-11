@@ -23,7 +23,10 @@ class ReorderBehaviorTest extends TestCase
     {
         parent::setUp();
         $this->Songs = TableRegistry::get('Reorder.Songs');
-        $this->Songs->addBehavior('Reorder.Reorder', ['play_order' => null]);
+        $this->Songs->addBehavior('Reorder.Reorder', [
+            'play_order' => null,
+            'play_order_all' => null,
+        ]);
         $this->Behavior = $this->Songs->behaviors()->Reorder;
     }
 
@@ -46,7 +49,7 @@ class ReorderBehaviorTest extends TestCase
      */
     public function testInitialization()
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        // Nothing to test.
     }
 
     /**
@@ -60,12 +63,8 @@ class ReorderBehaviorTest extends TestCase
         $song->play_order = 2;
         $this->Songs->save($song);
 
-        $result = $this->Songs->find('list', ['valueField' => 'play_order'])->toArray();
-        $expected = [
-            1 => 2,
-            2 => 1,
-            3 => 3,
-        ];
+        $result = $this->Songs->find()->extract('play_order')->toArray();
+        $expected = [2, 1, 3];
         $this->assertEquals($expected, $result);
     }
 
@@ -76,7 +75,39 @@ class ReorderBehaviorTest extends TestCase
      */
     public function testBeforeSaveOnReorderMulti()
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        $song = $this->Songs->get(1);
+        $song->play_order = 2;
+        $song->play_order_all = 2;
+        $this->Songs->save($song);
+
+        $result = $this->Songs->find()->extract('play_order')->toArray();
+        $expected = [2, 1, 3];
+        $this->assertEquals($expected, $result);
+        
+        $result = $this->Songs->find()->extract('play_order_all')->toArray();
+        $expected = [2, 3, 1];
+        $this->assertEquals($expected, $result);
+    }
+    
+    /**
+     * Test the update of an existing item where the first reorder field is 
+     *  untouched but not the second one.
+     *
+     * @return void
+     */
+    public function testBeforeSaveNoChange()
+    {
+        $song = $this->Songs->get(1);
+        $song->play_order_all = 2;
+        $this->Songs->save($song);
+
+        $result = $this->Songs->find()->extract('play_order')->toArray();
+        $expected = [1, 2, 3];
+        $this->assertEquals($expected, $result);
+        
+        $result = $this->Songs->find()->extract('play_order_all')->toArray();
+        $expected = [2, 3, 1];
+        $this->assertEquals($expected, $result);
     }
     
     /**
@@ -92,13 +123,8 @@ class ReorderBehaviorTest extends TestCase
         ]);
         $this->Songs->save($song);
         
-        $result = $this->Songs->find('list', ['valueField' => 'play_order'])->toArray();
-        $expected = [
-            1 => 1,
-            2 => 3,
-            3 => 4,
-            4 => 2,
-        ];
+        $result = $this->Songs->find()->extract('play_order')->toArray();
+        $expected = [1, 3, 4, 2];
         $this->assertEquals($expected, $result);
     }
     
@@ -109,7 +135,20 @@ class ReorderBehaviorTest extends TestCase
      */
     public function testBeforeSaveOnInsertMulti()
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        $song = $this->Songs->newEntity([
+            'title' => 'New Song',
+            'play_order' => 2,
+            'play_order_all' => 2,
+        ]);
+        $this->Songs->save($song);
+        
+        $result = $this->Songs->find()->extract('play_order')->toArray();
+        $expected = [1, 3, 4, 2];
+        $this->assertEquals($expected, $result);
+        
+        $result = $this->Songs->find()->extract('play_order_all')->toArray();
+        $expected = [4, 3, 1, 2];
+        $this->assertEquals($expected, $result);
     }
     
     /**
@@ -122,11 +161,8 @@ class ReorderBehaviorTest extends TestCase
         $song = $this->Songs->get(1);
         $this->Songs->delete($song);
         
-        $result = $this->Songs->find('list', ['valueField' => 'play_order'])->toArray();
-        $expected = [
-            2 => 1,
-            3 => 2,
-        ];
+        $result = $this->Songs->find()->extract('play_order')->toArray();
+        $expected = [1, 2];
         $this->assertEquals($expected, $result);
     }
     
@@ -137,6 +173,15 @@ class ReorderBehaviorTest extends TestCase
      */    
     public function testBeforeDeleteMulti()
     {
-        $this->markTestIncomplete('Not implemented yet.');
+        $song = $this->Songs->get(2);
+        $this->Songs->delete($song);
+        
+        $result = $this->Songs->find()->extract('play_order')->toArray();
+        $expected = [1, 2];
+        $this->assertEquals($expected, $result);
+        
+        $result = $this->Songs->find()->extract('play_order_all')->toArray();
+        $expected = [2, 1];
+        $this->assertEquals($expected, $result);
     }
 }
